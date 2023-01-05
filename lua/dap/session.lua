@@ -1750,6 +1750,7 @@ function Session:event_capabilities(body)
   self.capabilities = vim.tbl_extend('force', self.capabilities, body.capabilities)
 end
 
+-- ealflm
 -- Send hot reload action
 function Session:hot_reload()
   self:request(
