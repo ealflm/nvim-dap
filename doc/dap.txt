@@ -506,6 +506,10 @@ The configuration values are set via `dap.defaults.fallback` (for global) or
   threads to be able to stop, you may want to set this to false.
   Defaults to true.
 
+- switchbuf. (string). Controls the behavior when jumping to a breakpoint.
+                       See |'switchbuf'|. Defaults to the global `'switchbuf'`
+                       setting.
+
 
 Some examples:
 >lua
@@ -823,6 +827,20 @@ goto_({line})                                                      *dap.goto_()*
         Parameters: ~
             {line}  Line number or line under cursor if nil.
 
+focus_frame()                                                 *dap.focus_frame()*
+        Jump/focus the current frame.
+
+        Which window to use depends on the `switchbuf` setting. See
+        |dap.defaults|.
+
+        A current frame is set when breakpoints are hit or when traversing
+        the stack using |dap.up()|, |dap.down()| or the threads and frames
+        widgets. See |dap-widgets|.
+
+        This is a no-op if there is no active session.
+        If there is a session active but no current frame it opens the threads
+        widget to allow pausing threads and picking a frame to focus.
+
 
 restart_frame()                                            *dap.restart_frame()*
         Restart execution of the current frame
@@ -1076,12 +1094,13 @@ For example:
 Listeners registered in the `before` table are called *before* the internal `nvim-dap` handlers are called. The listeners registered in the `after` table are called *after* internal `nvim-dap` handlers.
 
 
-For commands (request responses), the listeners are called with four arguments:
+For commands (request responses), the listeners are called with five arguments:
 
 1. The session
 2. An error: A optional table with `message` and `body` properties.
 3. A table with the response. `nil` if an error occurred.
 4. The original payload of the request
+5. The sequence number for the request (also known as message ID)
 
 For events, the listeners are called with two arguments:
 
